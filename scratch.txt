@@ -1,0 +1,56 @@
+1) Create a new S3 Bucket (S3BucketName: clientmay2020) to upload the python Source code (ReadFile.py.zip)
+Note: This S3 bucket is only for uploading the code. if this bucket name is not available, we need to modify the cloud
+formation template to use a new name(line :71)
+Once the deployment python File has been uploaded to S3, We are ready to deploy the code using cloud formation template
+
+2) Download the cloud formation template file (CFT.JSON) to you local system (say C:\test)
+and Go to AWS Console and select Cloud Formation --> Create Stack
+
+3) In Create Stack Screen --> specify Template --> Upload Template File
+
+4)Click Choose File and navigate to the Cloud formation JSON file downloaded to you local system (c:\test\CFT.JSON)
+and click "Next"
+
+5) Enter Stack Name (say : AIGSampleCode) and click "Next"
+
+6) Click Next on the "Configure Stack Options" Screen for these test exercise
+
+7) In the next screen "Review AIGSampleCode" , select "Acknowlege checkbox" under Capabilities and click "Create Stack"
+Note: This can be automated
+
+8) Appropriate Events are triggered and the follow components are created automatically and there should not be any issue
+Roles and Role policies will be created, a new s3bucket name: aigsamples3bucket  will be created, new lambda function
+will be created and roles are associated with S3 and lambda function.
+Note: if the roles and s3buckets are existing already before executing this cloudformation template, then the system
+ will thrown an error and Cloud formation template will fail
+
+9) Go to "Lambda". You should be able to see a lambda function name : CFTAIGLambda
+
+10)Click this "CFTAIGLambda" function and the code will be displayed
+
+11)It can be tested in AWS UI console by configuring test events.
+
+12)Click 'Select a test event' drop down and select "Configure Test Events"
+
+13)Add "AIGTest" as event name and paste the below event to pass S3 bucket name as a parameter
+{
+  "BucketName":"aigsamples3bucket"
+}
+
+Scoll to the bottom and click "Create"
+
+14) Pls make sure you see the "AIGTest" in the dropdown and You can click the "Test"
+
+15)The response will be displayed (ex: {"files": []}) since no files are uploaded
+
+16) Please upload the file to s3 bucket and run the "AIGTest" event "Test" again. You will able to see the json
+will uploaded file name in JSON Format.
+
+{ “files”: [{ “name”: “file1”}, {“name”: “file2”},…]}
+
+
+
+
+
+
+

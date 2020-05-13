@@ -1,0 +1,90 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Cloud Formation Template",
+    "Resources": {
+
+    "roleAIG": {
+         "Type": "AWS::IAM::Role",
+         "Properties": {
+           "RoleName": "roleLambdaAIG",
+            "AssumeRolePolicyDocument": {
+               "Version" : "2012-10-17",
+               "Statement": [ {
+                  "Effect": "Allow",
+                  "Principal": {
+                     "Service": [ "lambda.amazonaws.com" ]
+                  },
+                  "Action": [ "sts:AssumeRole" ]
+               } ]
+            },
+            "Path": "/"
+         }
+      },
+
+      "RolePolicies": {
+         "Type": "AWS::IAM::Policy",
+         "Properties": {
+            "PolicyName": "plcyIAMAIG",
+            "PolicyDocument": {
+               "Version" : "2012-10-17",
+               "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:ListAllMyBuckets",
+                            "s3:GetBucketLocation"
+                        ],
+                        "Resource": "*"
+                    },
+                    {
+                        "Effect": "Allow",
+                        "Action": "s3:*",
+                        "Resource": [
+                            "arn:aws:s3:::aigsamples3bucket",
+                            "arn:aws:s3:::aigsamples3bucket/*"
+                        ]
+                    }
+                ]
+            },
+            "Roles": [ {
+               "Ref": "roleAIG"
+            } ]
+         }
+      },
+
+      "RootInstanceProfile": {
+         "Type": "AWS::IAM::InstanceProfile",
+         "Properties": {
+            "Path": "/",
+            "Roles": [ {
+               "Ref": "roleAIG"
+            } ]
+         }
+      },
+
+
+      "AIGLambda": {
+        "Type": "AWS::Lambda::Function",
+        "Properties": {
+          "FunctionName": "CFTAIGLambda",
+            "Code": {
+            "S3Bucket": "clientmay2020",
+             "S3Key": "ReadFile.py.zip"
+          },
+          "Description": "Cloud formation for Lambda",
+          "Handler": "ReadFile.lambda_GetFileNames",
+           "Role": {
+            "Fn::GetAtt": ["roleAIG", "Arn"]
+             },
+          "Runtime": "python3.7",
+          "Timeout": 120
+        }
+      },
+      "rAIGS3Sample": {
+        "Type": "AWS::S3::Bucket",
+        "Properties": {
+           "BucketName": "aigsamples3bucket"
+        }
+      }
+    }
+}
